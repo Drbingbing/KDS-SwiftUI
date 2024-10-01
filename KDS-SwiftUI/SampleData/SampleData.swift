@@ -10,18 +10,6 @@ struct SampleData {
     
     private static var lastOrderID: UInt32 = 10000000
     
-    static let A1: [NewOrder] = [
-        NewOrder(
-            orderID: 10000000,
-            tag: "A1",
-            orderItems: [
-                NewOrderItem(itemID: 100001, orderID: 1, name: "Pizza", quantity: 1),
-                NewOrderItem(itemID: 100002, orderID: 1, name: "Pasta", quantity: 1),
-                NewOrderItem(itemID: 100003, orderID: 1, name: "Salad", quantity: 1)
-            ]
-        )
-    ]
-    
     static func randomOrder(_ itemsCount: Int) -> [NewOrder] {
         let orderId = lastOrderID + 1
         let tag = generateRandomTag()

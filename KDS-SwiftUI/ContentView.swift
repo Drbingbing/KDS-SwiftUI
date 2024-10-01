@@ -10,6 +10,10 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var appState = AppState()
     
+    private func didCreateButtonTapped() {
+        withAnimation { appState.makeNewOrder() }
+    }
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -17,12 +21,11 @@ struct ContentView: View {
                     OrderSection(order: order, appState: appState)
                 }
             }
-            .animation(.linear, value: appState.allOrders)
             .listStyle(.insetGrouped)
-            .onAppear(perform: appState.mockOrders)
+            .onAppear(perform: appState.makeNewOrder)
             .navigationTitle(Text("Food"))
             .toolbar {
-                Button(action: appState.makeNewOrder) {
+                Button(action: didCreateButtonTapped) {
                     Image(systemName: "plus")
                         .foregroundStyle(.black)
                 }
@@ -84,7 +87,8 @@ private struct OrderItemRow: View {
             Spacer()
             if isFinished {
                 Image(systemName: "checkmark")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(.red)
+                    .bold()
                     .animation(.easeIn, value: isFinished)
             } else {
                 Button(action: didFinishButtonTapped) {

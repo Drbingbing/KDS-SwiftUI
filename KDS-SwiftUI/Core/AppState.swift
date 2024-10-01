@@ -13,29 +13,8 @@ final class AppState: ObservableObject {
     
     @Published var allOrders: [Order] = []
     
-    func mockOrders() {
-        Task { @MainActor in
-            try await Task.sleep(for: .seconds(0.5))
-            allOrders = SampleData.A1.map {
-                Order(
-                    orderID: $0.orderID,
-                    tag: $0.tag,
-                    items: $0.orderItems.map {
-                        OrderItem(
-                            itemID: $0.itemID,
-                            orderID: $0.orderID,
-                            name: $0.name,
-                            quantity: $0.quantity,
-                            state: .new
-                        )
-                    }
-                )
-            }
-        }
-    }
-    
     func makeNewOrder() {
-        let newOrder = SampleData.randomOrder(Int.random(in: 1...3))
+        let newOrder = SampleData.randomOrder(Int.random(in: 1...6))
             .map {
                 Order(
                     orderID: $0.orderID,
@@ -51,18 +30,39 @@ final class AppState: ObservableObject {
                     }
                 )
             }
+        
         allOrders.append(contentsOf: newOrder)
     }
     
     func orderItemComplete(in orderID: Order.ID, itemID: OrderItem.ID) {
         Task { @MainActor in
-            guard let orderIndex = allOrders.firstIndex(where: { $0.orderID == orderID }),
-                  let itemIndex = allOrders[orderIndex].items.firstIndex(where: { $0.itemID == itemID })
+            guard let orderIndex = findOrderPositionBy(orderID),
+                  let itemIndex = findOrderItemPositionBy(itemID, in: orderIndex)
             else { return }
             
             let item = allOrders[orderIndex].items[itemIndex]
-            let finishedItem = await finishedBox.add(orderItem: item)
+            let finishedItem = await addFinishedOrderItem(item)
+            
             allOrders[orderIndex].items[itemIndex].state = .finished(finishedItem.completeDate)
         }
+    }
+    
+    @discardableResult
+    private func addFinishedOrderItem(_ orderItem: OrderItem) async -> FinishedOrderItem {
+        await finishedBox.add(orderItem: orderItem)
+    }
+    
+}
+
+
+// MARK: - order and order item searching methods
+extension AppState {
+    
+    private func findOrderPositionBy(_ orderID: Order.ID) -> Int? {
+        allOrders.firstIndex(where: { $0.orderID == orderID })
+    }
+    
+    private func findOrderItemPositionBy(_ orderItemID: OrderItem.ID, in orderPosition: Int) -> Int? {
+        allOrders[orderPosition].items.firstIndex(where: { $0.itemID == orderItemID })
     }
 }
