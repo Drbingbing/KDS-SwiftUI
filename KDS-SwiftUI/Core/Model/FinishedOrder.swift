@@ -10,11 +10,11 @@ import Foundation
 
 public struct FinishedOrderItem {
     
-    public let itemID: Int
+    public let itemID: UInt32
     public let completeDate: Date
-    public let quantity: Int
+    public let quantity: UInt32
         
-    public init(itemID: Int, completeDate: Date, quantity: Int) {
+    public init(itemID: UInt32, completeDate: Date, quantity: UInt32) {
         self.itemID = itemID
         self.completeDate = completeDate
         self.quantity = quantity

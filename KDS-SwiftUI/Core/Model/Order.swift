@@ -9,15 +9,15 @@ import Foundation
 
 public struct OrderItem: Hashable, Sendable, Identifiable {
     
-    public var id: Int { itemID }
+    public var id: UInt32 { itemID }
     
     public var state: OrderItemState
-    public let itemID: Int
-    public let orderID: Int
+    public let itemID: UInt32
+    public let orderID: UInt32
     public let name: String
-    public let quantity: Int
+    public let quantity: UInt32
     
-    public init(itemID: Int, orderID: Int, name: String, quantity: Int, state: OrderItemState) {
+    public init(itemID: UInt32, orderID: UInt32, name: String, quantity: UInt32, state: OrderItemState) {
         self.itemID = itemID
         self.orderID = orderID
         self.name = name
@@ -28,13 +28,13 @@ public struct OrderItem: Hashable, Sendable, Identifiable {
 
 public struct Order: Sendable, Hashable, Identifiable {
     
-    public var id: Int { orderID }
+    public var id: UInt32 { orderID }
     
-    public let orderID: Int
+    public let orderID: UInt32
     public let tag: String
     public var items: [OrderItem]
     
-    public init(orderID: Int, tag: String, items: [OrderItem]) {
+    public init(orderID: UInt32, tag: String, items: [OrderItem]) {
         self.orderID = orderID
         self.tag = tag
         self.items = items

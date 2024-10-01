@@ -6,11 +6,11 @@
 //
 
 public struct NewOrder: Sendable, Hashable {
-    public let orderID: Int
+    public let orderID: UInt32
     public let tag: String
     public let orderItems: [NewOrderItem]
     
-    public init(orderID: Int, tag: String, orderItems: [NewOrderItem]) {
+    public init(orderID: UInt32, tag: String, orderItems: [NewOrderItem]) {
         self.orderID = orderID
         self.tag = tag
         self.orderItems = orderItems
@@ -18,12 +18,12 @@ public struct NewOrder: Sendable, Hashable {
 }
 
 public struct NewOrderItem: Sendable, Hashable {
-    public let itemID: Int
-    public let orderID: Int
+    public let itemID: UInt32
+    public let orderID: UInt32
     public let name: String
-    public let quantity: Int
+    public let quantity: UInt32
     
-    public init(itemID: Int, orderID: Int, name: String, quantity: Int) {
+    public init(itemID: UInt32, orderID: UInt32, name: String, quantity: UInt32) {
         self.itemID = itemID
         self.orderID = orderID
         self.name = name
