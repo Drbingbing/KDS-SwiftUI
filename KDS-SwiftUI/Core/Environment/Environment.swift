@@ -27,4 +27,14 @@ public struct Storage {
     public func remove(finishedOrderItems orderItems: [FinishedOrderItem]) async {
         await removeFinishedOrderItems(orderItems)
     }
+    
+    public var saveCancelledOrderItems: ([CancelledOrderItem]) async -> Void = { _ in store.save() }
+    public func save(cancelledOrderItems orderItems: [CancelledOrderItem]) async {
+        await saveCancelledOrderItems(orderItems)
+    }
+    
+    public var removeCancelledOrderItems: ([CancelledOrderItem]) async -> Void = { _ in store.delete() }
+    public func remove(cancelledOrderItems orderItems: [CancelledOrderItem]) async {
+        await remove(cancelledOrderItems: orderItems)
+    }
 }

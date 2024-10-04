@@ -10,6 +10,7 @@ import Foundation
 final class AppState: ObservableObject {
     
     private let finishedBox: any FinishedOrderBox = FinishedOrderItemBoxImpl()
+    private let cancelledBox: any CancelledOrderBox = CancelledOrderItemBoxImpl()
     
     @Published var allOrders: [Order] = []
     
@@ -47,6 +48,23 @@ final class AppState: ObservableObject {
         }
     }
     
+    func orderCancelled(in orderID: Order.ID, itemID: OrderItem.ID) {
+        Task { @MainActor in
+            guard let orderIndex = findOrderPositionBy(orderID),
+                  let itemIndex = findOrderItemPositionBy(itemID, in: orderIndex)
+            else { return }
+            
+            let item = allOrders[orderIndex].items[itemIndex]
+            let cancelledItem = await addCancelledOrderItem(item)
+            
+            allOrders[orderIndex].items[itemIndex].state = .cancelled(cancelledItem.cancelledDate)
+        }
+    }
+}
+
+// MARK: - finished box
+extension AppState {
+    
     @discardableResult
     private func addFinishedOrderItem(_ orderItem: OrderItem) async -> FinishedOrderItem {
         await finishedBox.add(orderItem: orderItem)
@@ -54,6 +72,14 @@ final class AppState: ObservableObject {
     
 }
 
+// MARK: - cancel box
+extension AppState {
+    
+    @discardableResult
+    private func addCancelledOrderItem(_ orderItem: OrderItem) async -> CancelledOrderItem {
+        await cancelledBox.add(orderItem: orderItem)
+    }
+}
 
 // MARK: - order and order item searching methods
 extension AppState {

@@ -59,12 +59,6 @@ private struct OrderItemRow: View {
     var orderItem: OrderItem
     let appState: AppState
     
-    private func string(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd HH:mm:ss"
-        return formatter.string(from: date)
-    }
-    
     private func didFinishButtonTapped() {
         withAnimation { isFinished = true }
         appState.orderItemComplete(in: orderItem.orderID, itemID: orderItem.itemID)
@@ -72,33 +66,26 @@ private struct OrderItemRow: View {
     
     var body: some View {
         HStack {
-            Text(orderItem.name)
-                .font(.headline)
-            if case let .finished(completeDate) = orderItem.state {
-                HStack(alignment: .bottom, spacing: 4) {
-                    Text("finished at ")
-                        .foregroundStyle(Color(.systemGray2))
-                        .font(.footnote)
-                    Text(string(completeDate))
-                        .foregroundStyle(.gray)
-                        .font(.caption2.bold())
-                }
+            NameView(orderItem: orderItem)
+            switch orderItem.state {
+            case let .finished(completeDate):
+                FinishedStateView(completeDate: completeDate)
+            case let .cancelled(cancelDate):
+                CancelledStateView(cancelDate: cancelDate)
+            case .new:
+                EmptyView()
             }
             Spacer()
-            if isFinished {
-                Image(systemName: "checkmark")
-                    .foregroundStyle(.red)
-                    .bold()
-                    .animation(.easeIn, value: isFinished)
-            } else {
-                Button(action: didFinishButtonTapped) {
-                    Text("完成")
-                }
-                .animation(.easeOut, value: isFinished)
+            QuantityView(orderItem: orderItem)
+            if !orderItem.state.isCancelled {
+                FinishButtonView(isFinished: isFinished, action: didFinishButtonTapped)
             }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
+        .contextMenu {
+            MarkAsCancelButton(appState: appState, orderItem: orderItem)
+        }
     }
 }
 
