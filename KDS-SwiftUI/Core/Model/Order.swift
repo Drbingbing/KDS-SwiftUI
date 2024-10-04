@@ -31,12 +31,16 @@ public struct Order: Sendable, Hashable, Identifiable {
     public var id: UInt32 { orderID }
     
     public let orderID: UInt32
-    public let tag: String
+    public let orderNumber: String
+    public let diningOption: DiningOption
+    public let numberOfDiners: Int
     public var items: [OrderItem]
     
-    public init(orderID: UInt32, tag: String, items: [OrderItem]) {
+    public init(orderID: UInt32, orderNumber: String, diningOption: String, numberOfDiners: Int, items: [OrderItem]) {
         self.orderID = orderID
-        self.tag = tag
+        self.orderNumber = orderNumber
+        self.diningOption = DiningOption(diningOption) ?? .takeout
+        self.numberOfDiners = numberOfDiners
         self.items = items
     }
 }

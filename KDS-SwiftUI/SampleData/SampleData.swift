@@ -12,7 +12,6 @@ struct SampleData {
     
     static func randomOrder(_ itemsCount: Int) -> [NewOrder] {
         let orderId = lastOrderID + 1
-        let tag = generateRandomTag()
         let items = (0..<itemsCount).map { _ in
             NewOrderItem(
                 itemID: generateRandomNumber(6),
@@ -23,11 +22,29 @@ struct SampleData {
         }
         
         lastOrderID = orderId
-        return [NewOrder(orderID: orderId, tag: tag, orderItems: items)]
+        return [
+            NewOrder(
+                orderID: orderId,
+                diningOption: generateRandomDiningOption(),
+                numberOfDiners: generateRandomNumberOfDiners(),
+                orderNumber: generateRandomOrderNumber(),
+                orderItems: items
+            )
+        ]
     }
 }
 
-private func generateRandomTag() -> String {
+private func generateRandomDiningOption() -> String {
+    let options = ["dine-in", "takeout", "to-go", "delivery"]
+    return options.randomElement()!
+}
+
+private func generateRandomNumberOfDiners() -> Int {
+    let numbers = [1, 3, 4, 6, 8, 9]
+    return numbers.randomElement()!
+}
+
+private func generateRandomOrderNumber() -> String {
     
     func randomUppercaseLetter() -> Character {
         let letters = (65...90).compactMap { UnicodeScalar($0) }
@@ -37,7 +54,7 @@ private func generateRandomTag() -> String {
     let alphabet = randomUppercaseLetter()
     let number = generateRandomNumber(1)
     
-    return String(alphabet) + String(number)
+    return "#" + String(alphabet) + String(number)
 }
 
 private func generateRandomQuantity() -> UInt32 {

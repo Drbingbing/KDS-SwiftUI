@@ -7,12 +7,16 @@
 
 public struct NewOrder: Sendable, Hashable {
     public let orderID: UInt32
-    public let tag: String
+    public let orderNumber: String
+    public let diningOption: String
+    public let numberOfDiners: Int
     public let orderItems: [NewOrderItem]
     
-    public init(orderID: UInt32, tag: String, orderItems: [NewOrderItem]) {
+    public init(orderID: UInt32, diningOption: String, numberOfDiners: Int, orderNumber: String, orderItems: [NewOrderItem]) {
         self.orderID = orderID
-        self.tag = tag
+        self.diningOption = diningOption
+        self.numberOfDiners = numberOfDiners
+        self.orderNumber = orderNumber
         self.orderItems = orderItems
     }
 }

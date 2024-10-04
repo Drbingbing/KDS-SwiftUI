@@ -19,7 +19,9 @@ final class AppState: ObservableObject {
             .map {
                 Order(
                     orderID: $0.orderID,
-                    tag: $0.tag,
+                    orderNumber: $0.orderNumber,
+                    diningOption: $0.diningOption,
+                    numberOfDiners: $0.numberOfDiners,
                     items: $0.orderItems.map {
                         OrderItem(
                             itemID: $0.itemID,
