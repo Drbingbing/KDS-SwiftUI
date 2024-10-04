@@ -7,12 +7,44 @@
 
 import SwiftUI
 
+struct NumberSignView: View {
+    var orderItem: OrderItem
+    
+    var body: some View {
+        Text("#")
+            .font(.headline)
+            .strikethrough(orderItem.state.isCancelled, color: Color.secondary)
+    }
+}
+
+struct TimeView: View {
+    var orderItem: OrderItem
+    
+    var body: some View {
+        Text(Current.date().formatted(date: .omitted, time: .shortened))
+            .font(.headline)
+            .foregroundStyle(Color.gray)
+            .strikethrough(orderItem.state.isCancelled, color: Color.secondary)
+    }
+}
+
 struct NameView: View {
     var orderItem: OrderItem
     
     var body: some View {
         Text(orderItem.name)
             .font(.headline)
+            .strikethrough(orderItem.state.isCancelled, color: Color.secondary)
+    }
+}
+
+struct SourceView: View {
+    var orderItem: OrderItem
+    
+    var body: some View {
+        Text("boss")
+            .foregroundStyle(Color.brown)
+            .bold()
             .strikethrough(orderItem.state.isCancelled, color: Color.secondary)
     }
 }
