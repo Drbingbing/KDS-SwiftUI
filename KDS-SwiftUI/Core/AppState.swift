@@ -12,8 +12,9 @@ final class AppState: ObservableObject {
     private let finishedBox: any FinishedOrderBox = FinishedOrderItemBoxImpl()
     private let cancelledBox: any CancelledOrderBox = CancelledOrderItemBoxImpl()
     
+    @Published var currentTime: String = Current.date().formatted(date: .omitted, time: .shortened)
     @Published var allOrders: [Order] = []
-    
+        
     func makeNewOrder() {
         let newOrder = SampleData.randomOrder(Int.random(in: 1...6))
             .map {
