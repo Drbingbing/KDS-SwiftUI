@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct NumberSignView: View {
     var orderItem: OrderItem
@@ -18,13 +19,34 @@ struct NumberSignView: View {
 }
 
 struct TimeView: View {
+    @State private var timeProcessing: String = ""
+    
     var orderItem: OrderItem
     
+    init(orderItem: OrderItem) {
+        self.orderItem = orderItem
+    }
+    
     var body: some View {
-        Text(Current.date().formatted(date: .omitted, time: .shortened))
+        Text(timeProcessing)
             .font(.headline)
             .foregroundStyle(Color.gray)
             .strikethrough(orderItem.state.isCancelled, color: Color.secondary)
+            .onTimerFired(every: 1, isRepeat: true) { subscription in
+                if orderItem.state.isCancelled || orderItem.state.isFinished {
+                    subscription?.cancel()
+                    timeProcessing = ""
+                    return
+                }
+                let elapsed = Current.date().timeIntervalSince1970 - orderItem.createAt
+                let hr = (elapsed/3600).rounded(.towardZero)
+                let mm = ((elapsed - 3600 * hr)/60).rounded(.towardZero)
+                let ss = (elapsed - (3600 * hr) - (60 * mm)).rounded(.towardZero)
+                let hour = String(format: hr < 100 ? "%02.0f" : "%03.0f", hr)
+                let minutes = String(format: "%02.0f", mm)
+                let seconds = String(format: "%02.0f", ss)
+                timeProcessing = "\(hour):\(minutes):\(seconds)"
+            }
     }
 }
 
@@ -61,19 +83,23 @@ struct QuantityView: View {
 }
 
 struct FinishButtonView: View {
+    var orderItem: OrderItem
     var isFinished: Bool
     var action: () -> Void
     
     var body: some View {
-        if isFinished {
+        if orderItem.state.isCancelled {
+            Text("Cancelled")
+                .foregroundStyle(Color.red)
+        }
+        else if isFinished {
             Image(systemName: "checkmark")
                 .foregroundStyle(.red)
                 .bold()
                 .animation(.easeIn, value: isFinished)
         } else {
-            Color.clear.frame(width: 20)
             Button(action: action) {
-                Text("完成")
+                Text("Finish")
             }
             .animation(.easeOut, value: isFinished)
         }

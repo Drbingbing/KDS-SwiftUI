@@ -12,17 +12,19 @@ public struct OrderItem: Hashable, Sendable, Identifiable {
     public var id: UInt32 { itemID }
     
     public var state: OrderItemState
+    public var createAt: Double
     public let itemID: UInt32
     public let orderID: UInt32
     public let name: String
     public let quantity: UInt32
     
-    public init(itemID: UInt32, orderID: UInt32, name: String, quantity: UInt32, state: OrderItemState) {
+    public init(itemID: UInt32, orderID: UInt32, name: String, quantity: UInt32, createAt: Double, state: OrderItemState) {
         self.itemID = itemID
         self.orderID = orderID
         self.name = name
         self.quantity = quantity
         self.state = state
+        self.createAt = createAt
     }
 }
 

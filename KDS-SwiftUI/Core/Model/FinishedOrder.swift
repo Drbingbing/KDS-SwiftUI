@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct FinishedOrderItem {
+public struct FinishedOrderItem: Sendable, Hashable {
     
     public let itemID: UInt32
     public let completeDate: Date

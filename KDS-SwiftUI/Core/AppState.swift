@@ -17,18 +17,19 @@ final class AppState: ObservableObject {
         
     func makeNewOrder() {
         let newOrder = SampleData.randomOrder(Int.random(in: 1...6))
-            .map {
+            .map { order in
                 Order(
-                    orderID: $0.orderID,
-                    orderNumber: $0.orderNumber,
-                    diningOption: $0.diningOption,
-                    numberOfDiners: $0.numberOfDiners,
-                    items: $0.orderItems.map {
+                    orderID: order.orderID,
+                    orderNumber: order.orderNumber,
+                    diningOption: order.diningOption,
+                    numberOfDiners: order.numberOfDiners,
+                    items: order.orderItems.map {
                         OrderItem(
                             itemID: $0.itemID,
                             orderID: $0.orderID,
                             name: $0.name,
                             quantity: $0.quantity,
+                            createAt: order.createAt,
                             state: .new
                         )
                     }
@@ -63,6 +64,18 @@ final class AppState: ObservableObject {
             allOrders[orderIndex].items[itemIndex].state = .cancelled(cancelledItem.cancelledDate)
         }
     }
+    
+    func markAllAsCompleted() {
+        Task { @MainActor in
+            let indexPaths = findNewOrderItemsPosition()
+            let orderItems = indexPaths.map { allOrders[$0.section].items[$0.index] }
+            let finishedItems = await addFinishedOrderItems(orderItems)
+            
+            for (left, right) in zip(indexPaths, finishedItems) {
+                allOrders[left.section].items[left.index].state = .finished(right.completeDate)
+            }
+        }
+    }
 }
 
 // MARK: - finished box
@@ -73,6 +86,10 @@ extension AppState {
         await finishedBox.add(orderItem: orderItem)
     }
     
+    @discardableResult
+    private func addFinishedOrderItems(_ orderItems: [OrderItem]) async -> [FinishedOrderItem] {
+        await finishedBox.add(orderItems: orderItems)
+    }
 }
 
 // MARK: - cancel box
@@ -93,5 +110,19 @@ extension AppState {
     
     private func findOrderItemPositionBy(_ orderItemID: OrderItem.ID, in orderPosition: Int) -> Int? {
         allOrders[orderPosition].items.firstIndex(where: { $0.itemID == orderItemID })
+    }
+    
+    private func findNewOrderItemsPosition() -> [(section: Int, index: Int)] {
+        var result: [(section: Int, index: Int)] = []
+        for orderIndex in 0..<allOrders.count {
+            let items = allOrders[orderIndex].items
+            for itemIndex in 0..<items.count {
+                if items[itemIndex].state.isNew {
+                    result.append((orderIndex, itemIndex))
+                }
+            }
+        }
+        
+        return result
     }
 }

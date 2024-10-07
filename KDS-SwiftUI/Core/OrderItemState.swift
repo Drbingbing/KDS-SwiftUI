@@ -25,4 +25,11 @@ public enum OrderItemState: Sendable, Hashable {
         }
         return false
     }
+    
+    var isNew: Bool {
+        if case .new = self {
+            return true
+        }
+        return false
+    }
 }

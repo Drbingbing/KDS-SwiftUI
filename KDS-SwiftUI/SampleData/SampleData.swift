@@ -28,6 +28,7 @@ struct SampleData {
                 diningOption: generateRandomDiningOption(),
                 numberOfDiners: generateRandomNumberOfDiners(),
                 orderNumber: generateRandomOrderNumber(),
+                createAt: Current.date().timeIntervalSince1970,
                 orderItems: items
             )
         ]

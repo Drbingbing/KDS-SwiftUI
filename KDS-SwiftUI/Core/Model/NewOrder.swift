@@ -10,13 +10,15 @@ public struct NewOrder: Sendable, Hashable {
     public let orderNumber: String
     public let diningOption: String
     public let numberOfDiners: Int
+    public let createAt: Double
     public let orderItems: [NewOrderItem]
     
-    public init(orderID: UInt32, diningOption: String, numberOfDiners: Int, orderNumber: String, orderItems: [NewOrderItem]) {
+    public init(orderID: UInt32, diningOption: String, numberOfDiners: Int, orderNumber: String, createAt: Double, orderItems: [NewOrderItem]) {
         self.orderID = orderID
         self.diningOption = diningOption
         self.numberOfDiners = numberOfDiners
         self.orderNumber = orderNumber
+        self.createAt = createAt
         self.orderItems = orderItems
     }
 }

@@ -23,10 +23,11 @@ struct OrderItemRow: View {
         GeometryReader { metrics in
             HStack(spacing: 0) {
                 NumberSignView(orderItem: orderItem)
-                    .frame(width: metrics.size.width * 0.05)
+                    .frame(width: metrics.size.width * Constant.Ratio.hash, alignment: .leading)
                 TimeView(orderItem: orderItem)
-                    .frame(width: metrics.size.width * 0.1)
+                    .frame(width: metrics.size.width * Constant.Ratio.time, alignment: .leading)
                 NameView(orderItem: orderItem)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .layoutPriority(1)
                 switch orderItem.state {
                 case let .finished(completeDate):
@@ -38,21 +39,18 @@ struct OrderItemRow: View {
                 }
                 Spacer()
                 QuantityView(orderItem: orderItem)
-                    .frame(width: metrics.size.width * 0.05)
+                    .frame(width: metrics.size.width * Constant.Ratio.quantity)
                 SourceView(orderItem: orderItem)
-                    .frame(width: metrics.size.width * 0.1)
-                if !orderItem.state.isCancelled {
-                    FinishButtonView(isFinished: isFinished, action: didFinishButtonTapped)
-                        .frame(width: metrics.size.width * 0.1)
-                }
+                    .frame(width: metrics.size.width * Constant.Ratio.source)
+                FinishButtonView(orderItem: orderItem, isFinished: isFinished ? isFinished : orderItem.state.isFinished, action: didFinishButtonTapped)
+                    .frame(width: metrics.size.width * Constant.Ratio.complete)
             }
-            .padding(.horizontal, 20)
             .padding(.vertical, 8)
-            .contextMenu {
-                MarkAsCancelButton(appState: appState, orderItem: orderItem)
-            }
-            .frame(width: .infinity)
         }
-        .frame(minHeight: 36)
+        .frame(minHeight: 40)
+        .padding(.horizontal, 20)
+        .contextMenu {
+            MarkAsCancelButton(appState: appState, orderItem: orderItem)
+        }
     }
 }

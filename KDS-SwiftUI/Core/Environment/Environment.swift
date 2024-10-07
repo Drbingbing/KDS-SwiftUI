@@ -35,6 +35,6 @@ public struct Storage {
     
     public var removeCancelledOrderItems: ([CancelledOrderItem]) async -> Void = { _ in store.delete() }
     public func remove(cancelledOrderItems orderItems: [CancelledOrderItem]) async {
-        await remove(cancelledOrderItems: orderItems)
+        await removeCancelledOrderItems(orderItems)
     }
 }
