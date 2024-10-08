@@ -27,6 +27,9 @@ struct MainWindow: View {
             .navigationTitle(
                 Text(appState.currentTime)
             )
+            .onTimerFired(every: 1, isRepeat: true) { _ in
+                appEnvironment.interactors.appInteractor.updateTime()
+            }
         }
     }
 }
@@ -38,7 +41,4 @@ struct MainWindow: View {
     MainWindow()
         .environment(\.appEnvironment, appEnvironment)
         .environmentObject(appState)
-        .onAppear {
-            appState.currentTime = appEnvironment.current.date().formatted(date: .omitted, time: .shortened)
-        }
 }

@@ -18,6 +18,8 @@ struct NumberSignView: View {
 }
 
 struct TimeView: View {
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment
+    
     @State private var timeProcessing: String = ""
     
     var orderItem: OrderItem
@@ -36,7 +38,7 @@ struct TimeView: View {
                     timeProcessing = ""
                     return
                 }
-                let elapsed = Current.date().timeIntervalSince1970 - orderItem.createAt
+                let elapsed = appEnvironment.current.date().timeIntervalSince1970 - orderItem.createAt
                 let hr = (elapsed/3600).rounded(.towardZero)
                 let mm = ((elapsed - 3600 * hr)/60).rounded(.towardZero)
                 let ss = (elapsed - (3600 * hr) - (60 * mm)).rounded(.towardZero)

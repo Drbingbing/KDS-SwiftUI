@@ -6,10 +6,15 @@
 //
 
 struct Interactors {
+    let appInteractor: any AppInteractor
     let orderInteractor: any OrderInteractor
     let displayInteractor: any DisplayStyleInteractor
     
     static var stub: Self {
-        .init(orderInteractor: StubOrderInteractor(), displayInteractor: StubDisplayStyleInteractor())
+        .init(
+            appInteractor: StubAppInteractor(),
+            orderInteractor: StubOrderInteractor(),
+            displayInteractor: StubDisplayStyleInteractor()
+        )
     }
 }

@@ -12,7 +12,7 @@ struct AppEnvironment {
     let interactors: Interactors
     let current: Environment
     
-    init(interactors: Interactors, environment: Environment = Current) {
+    init(interactors: Interactors, environment: Environment) {
         self.interactors = interactors
         self.current = environment
     }
@@ -20,10 +20,11 @@ struct AppEnvironment {
 
 extension AppEnvironment {
     static func bootstrap(_ appState: AppState) -> AppEnvironment {
+        let appInteractor = AppInteractorImpl(appState: appState, environment: Current)
         let orderInteractor = OrderInteractorImpl(appState: appState)
         let displayStyleInteractor = DisplayStyleInteractorImpl(appState: appState)
-        let interactors = Interactors(orderInteractor: orderInteractor, displayInteractor: displayStyleInteractor)
-        return AppEnvironment(interactors: interactors)
+        let interactors = Interactors(appInteractor: appInteractor, orderInteractor: orderInteractor, displayInteractor: displayStyleInteractor)
+        return AppEnvironment(interactors: interactors, environment: Current)
     }
 }
 

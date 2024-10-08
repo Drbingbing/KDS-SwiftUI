@@ -29,6 +29,7 @@ struct GridItemRow: View {
 }
 
 struct GridOrderItemTimeView: View {
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment
     
     @State private var timeProcessing: String = ""
     
@@ -48,7 +49,7 @@ struct GridOrderItemTimeView: View {
                 .font(.headline)
                 .foregroundStyle(Color.gray)
                 .onTimerFired(every: 1, isRepeat: true) { subscription in
-                    let elapsed = Current.date().timeIntervalSince1970 - createAt
+                    let elapsed = appEnvironment.current.date().timeIntervalSince1970 - createAt
                     let hr = (elapsed/3600).rounded(.towardZero)
                     let mm = ((elapsed - 3600 * hr)/60).rounded(.towardZero)
                     let ss = (elapsed - (3600 * hr) - (60 * mm)).rounded(.towardZero)
