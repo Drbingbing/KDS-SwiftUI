@@ -47,6 +47,7 @@ struct OrderItemRow: View {
                     .frame(width: metrics.size.width * Constant.Ratio.complete)
             }
             .padding(.vertical, 8)
+            .strikethrough(orderItem.state.isCancelled)
         }
         .frame(minHeight: 40)
         .padding(.horizontal, 20)
