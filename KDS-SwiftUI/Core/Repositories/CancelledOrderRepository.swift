@@ -1,24 +1,24 @@
 //
-//  CancelledOrderItemBox.swift
+//  CancelledOrderRepository.swift
 //  KDS-SwiftUI
 //
 //  Created by BingBing on 2024/10/4.
 //
 
-protocol CancelledOrderBox: Actor {
+protocol CancelledOrderRepository: Actor {
     
     func add(orderItems: [OrderItem]) async -> [CancelledOrderItem]
     func add(orderItem: OrderItem) async -> CancelledOrderItem
     func remove(_ orderItems: [OrderItem]) async
 }
 
-extension CancelledOrderBox {
+extension CancelledOrderRepository {
     func add(orderItem: OrderItem) async -> CancelledOrderItem {
         return await add(orderItems: [orderItem]).first!
     }
 }
 
-actor CancelledOrderItemBoxImpl: CancelledOrderBox {
+actor CancelledOrderRepositoryImpl: CancelledOrderRepository {
     
     private var context: [AnyHashable: CancelledOrderItem] = [:]
     

@@ -1,24 +1,24 @@
 //
-//  FinishedOrderItemBox.swift
+//  FinishedOrderRepository.swift
 //  KDS-SwiftUI
 //
 //  Created by BingBing on 2024/10/1.
 //
 
-protocol FinishedOrderBox: Actor {
+protocol FinishedOrderRepository: Actor {
     
     func add(orderItems: [OrderItem]) async -> [FinishedOrderItem]
     func add(orderItem: OrderItem) async -> FinishedOrderItem
     func remove(_ orderItems: [OrderItem]) async
 }
 
-extension FinishedOrderBox {
+extension FinishedOrderRepository {
     func add(orderItem: OrderItem) async -> FinishedOrderItem {
         return await add(orderItems: [orderItem]).first!
     }
 }
 
-actor FinishedOrderItemBoxImpl: FinishedOrderBox {
+actor FinishedOrderRepositoryImpl: FinishedOrderRepository {
     
     private var context: [AnyHashable: FinishedOrderItem] = [:]
     

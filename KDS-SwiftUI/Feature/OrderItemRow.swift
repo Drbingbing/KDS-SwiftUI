@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct OrderItemRow: View {
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment: AppEnvironment
     
+    @EnvironmentObject var appState: AppState
     @State private var isFinished = false
     
     var orderItem: OrderItem
-    let appState: AppState
     
     private func didFinishButtonTapped() {
         withAnimation { isFinished = true }
-        appState.orderItemComplete(in: orderItem.orderID, itemID: orderItem.itemID)
+        appEnvironment.interactors.orderInteractor.orderItemComplete(in: orderItem.orderID, itemID: orderItem.itemID)
     }
     
     var body: some View {

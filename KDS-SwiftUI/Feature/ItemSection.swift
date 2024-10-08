@@ -10,14 +10,13 @@ import SwiftUI
 struct OrderSection: View {
     
     var order: Order
-    let appState: AppState
     
     var body: some View {
         VStack(alignment: .leading) {
             OrderHeader(order: order)
                 .padding(.horizontal, 20)
             ForEach(order.items) { item in
-                OrderItemRow(orderItem: item, appState: appState)
+                OrderItemRow(orderItem: item)
             }
         }
     }

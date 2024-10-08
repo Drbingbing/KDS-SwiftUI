@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct MainToolbarModifier: ViewModifier {
-    
-    @EnvironmentObject var appState: AppState
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment: AppEnvironment
     
     func body(content: Content) -> some View {
         content
@@ -19,7 +18,7 @@ struct MainToolbarModifier: ViewModifier {
     private var toolbar: some ToolbarContent {
         ToolbarItemGroup {
             Button(action: {
-                withAnimation { appState.makeNewOrder() }
+                withAnimation { appEnvironment.interactors.orderInteractor.makeNewOrder() }
             }) {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)

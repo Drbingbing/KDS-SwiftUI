@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct KitchenHeader: View {
-    @EnvironmentObject var appState: AppState
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment: AppEnvironment
+    
     
     var body: some View {
         GeometryReader { metrics in
@@ -23,7 +24,7 @@ struct KitchenHeader: View {
                     .frame(width: metrics.size.width * Constant.Ratio.quantity)
                 Text("Source")
                     .frame(width: metrics.size.width * Constant.Ratio.source)
-                Button(action: appState.markAllAsCompleted) {
+                Button(action: appEnvironment.interactors.orderInteractor.markAllAsCompleted) {
                     Text("Complete all")
                 }
                 .foregroundStyle(Color.white)

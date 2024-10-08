@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainWindow: View {
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment: AppEnvironment
     @EnvironmentObject var appState: AppState
     
     var body: some View {
@@ -26,6 +27,12 @@ struct MainWindow: View {
 
 
 #Preview {
+    let appState = AppState()
+    let appEnvironment = AppEnvironment.bootstrap(appState)
     MainWindow()
-        .environmentObject(AppState())
+        .environment(\.appEnvironment, appEnvironment)
+        .environmentObject(appState)
+        .onAppear {
+            appState.currentTime = appEnvironment.current.date().formatted(date: .omitted, time: .shortened)
+        }
 }

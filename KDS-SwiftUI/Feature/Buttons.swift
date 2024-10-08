@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MarkAsCancelButton: View {
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment
+    
     let appState: AppState
     var orderItem: OrderItem
     
@@ -18,6 +20,6 @@ struct MarkAsCancelButton: View {
     }
     
     private func cancel() {
-        appState.orderCancelled(in: orderItem.orderID, itemID: orderItem.itemID)
+        appEnvironment.interactors.orderInteractor.orderItemCancelled(in: orderItem.orderID, itemID: orderItem.itemID)
     }
 }

@@ -1,20 +1,33 @@
 //
-//  AppState.swift
+//  OrderInteractor.swift
 //  KDS-SwiftUI
 //
-//  Created by BingBing on 2024/10/1.
+//  Created by BingBing on 2024/10/7.
 //
 
-import Foundation
+import SwiftUI
+import Combine
 
-final class AppState: ObservableObject {
+protocol OrderInteractor {
     
-    private let finishedBox: any FinishedOrderBox = FinishedOrderItemBoxImpl()
-    private let cancelledBox: any CancelledOrderBox = CancelledOrderItemBoxImpl()
+    func makeNewOrder()
+    func orderItemComplete(in orderID: Order.ID, itemID: OrderItem.ID)
+    func orderItemCancelled(in orderID: Order.ID, itemID: OrderItem.ID)
+    func markAllAsCompleted()
+}
+
+struct OrderInteractorImpl: OrderInteractor {
     
-    @Published var currentTime: String = Current.date().formatted(date: .omitted, time: .shortened)
-    @Published var allOrders: [Order] = []
-        
+    private let appState: AppState
+    private let finishedOrderRepository: any FinishedOrderRepository
+    private let cancelledOrderRepository: any CancelledOrderRepository
+    
+    init(appState: AppState) {
+        self.appState = appState
+        self.finishedOrderRepository = FinishedOrderRepositoryImpl()
+        self.cancelledOrderRepository = CancelledOrderRepositoryImpl()
+    }
+    
     func makeNewOrder() {
         let newOrder = SampleData.randomOrder(Int.random(in: 1...6))
             .map { order in
@@ -36,7 +49,7 @@ final class AppState: ObservableObject {
                 )
             }
         
-        allOrders.append(contentsOf: newOrder)
+        appState.allOrders.append(contentsOf: newOrder)
     }
     
     func orderItemComplete(in orderID: Order.ID, itemID: OrderItem.ID) {
@@ -45,77 +58,78 @@ final class AppState: ObservableObject {
                   let itemIndex = findOrderItemPositionBy(itemID, in: orderIndex)
             else { return }
             
-            let item = allOrders[orderIndex].items[itemIndex]
+            let item = appState.allOrders[orderIndex].items[itemIndex]
             let finishedItem = await addFinishedOrderItem(item)
             
-            allOrders[orderIndex].items[itemIndex].state = .finished(finishedItem.completeDate)
+            appState.allOrders[orderIndex].items[itemIndex].state = .finished(finishedItem.completeDate)
         }
     }
     
-    func orderCancelled(in orderID: Order.ID, itemID: OrderItem.ID) {
+    func orderItemCancelled(in orderID: Order.ID, itemID: OrderItem.ID) {
         Task { @MainActor in
             guard let orderIndex = findOrderPositionBy(orderID),
                   let itemIndex = findOrderItemPositionBy(itemID, in: orderIndex)
             else { return }
             
-            let item = allOrders[orderIndex].items[itemIndex]
+            let item = appState.allOrders[orderIndex].items[itemIndex]
             let cancelledItem = await addCancelledOrderItem(item)
             
-            allOrders[orderIndex].items[itemIndex].state = .cancelled(cancelledItem.cancelledDate)
+            appState.allOrders[orderIndex].items[itemIndex].state = .cancelled(cancelledItem.cancelledDate)
         }
     }
     
     func markAllAsCompleted() {
         Task { @MainActor in
             let indexPaths = findNewOrderItemsPosition()
-            let orderItems = indexPaths.map { allOrders[$0.section].items[$0.index] }
+            let orderItems = indexPaths.map { appState.allOrders[$0.section].items[$0.index] }
             let finishedItems = await addFinishedOrderItems(orderItems)
             
             for (left, right) in zip(indexPaths, finishedItems) {
-                allOrders[left.section].items[left.index].state = .finished(right.completeDate)
+                appState.allOrders[left.section].items[left.index].state = .finished(right.completeDate)
             }
         }
     }
 }
 
+
 // MARK: - finished box
-extension AppState {
+extension OrderInteractorImpl {
     
     @discardableResult
     private func addFinishedOrderItem(_ orderItem: OrderItem) async -> FinishedOrderItem {
-        await finishedBox.add(orderItem: orderItem)
+        await finishedOrderRepository.add(orderItem: orderItem)
     }
     
     @discardableResult
     private func addFinishedOrderItems(_ orderItems: [OrderItem]) async -> [FinishedOrderItem] {
-        await finishedBox.add(orderItems: orderItems)
+        await finishedOrderRepository.add(orderItems: orderItems)
     }
 }
 
 // MARK: - cancel box
-extension AppState {
+extension OrderInteractorImpl {
     
     @discardableResult
     private func addCancelledOrderItem(_ orderItem: OrderItem) async -> CancelledOrderItem {
-        await cancelledBox.add(orderItem: orderItem)
+        await cancelledOrderRepository.add(orderItem: orderItem)
     }
 }
 
 // MARK: - order and order item searching methods
-extension AppState {
+extension OrderInteractorImpl {
     
     private func findOrderPositionBy(_ orderID: Order.ID) -> Int? {
-        allOrders.firstIndex(where: { $0.orderID == orderID })
+        appState.allOrders.firstIndex(where: { $0.orderID == orderID })
     }
     
     private func findOrderItemPositionBy(_ orderItemID: OrderItem.ID, in orderPosition: Int) -> Int? {
-        allOrders[orderPosition].items.firstIndex(where: { $0.itemID == orderItemID })
+        appState.allOrders[orderPosition].items.firstIndex(where: { $0.itemID == orderItemID })
     }
     
     private func findNewOrderItemsPosition() -> [(section: Int, index: Int)] {
         var result: [(section: Int, index: Int)] = []
-        for orderIndex in 0..<allOrders.count {
-            let items = allOrders[orderIndex].items
+        for orderIndex in 0..<appState.allOrders.count {
+            let items = appState.allOrders[orderIndex].items
             for itemIndex in 0..<items.count {
                 if items[itemIndex].state.isNew {
                     result.append((orderIndex, itemIndex))
@@ -124,5 +138,21 @@ extension AppState {
         }
         
         return result
+    }
+}
+
+struct StubOrderInteractor: OrderInteractor {
+    func makeNewOrder() {}
+    
+    func orderItemComplete(in orderID: Order.ID, itemID: OrderItem.ID) {
+        print("[StubOrderInteractor]")
+    }
+    
+    func orderItemCancelled(in orderID: Order.ID, itemID: OrderItem.ID) {
+        print("[StubOrderInteractor]")
+    }
+    
+    func markAllAsCompleted() {
+        print("[StubOrderInteractor]")
     }
 }

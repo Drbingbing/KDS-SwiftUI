@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct OrderListView: View {
+    @SwiftUI.Environment(\.appEnvironment) var appEnvironment: AppEnvironment
     @EnvironmentObject var appState: AppState
     
     var visibleOrders: [Order] {
@@ -23,10 +24,12 @@ struct OrderListView: View {
     var body: some View {
         ScrollView {
             ForEach(visibleOrders) { order in
-                OrderSection(order: order, appState: appState)
+                OrderSection(order: order)
             }
             .frame(maxWidth: .infinity)
+            .onAppear {
+                appEnvironment.interactors.orderInteractor.makeNewOrder()
+            }
         }
-        .onAppear(perform: appState.makeNewOrder)
     }
 }
