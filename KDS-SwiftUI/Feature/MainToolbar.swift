@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainToolbarModifier: ViewModifier {
     @SwiftUI.Environment(\.appEnvironment) var appEnvironment: AppEnvironment
+    @EnvironmentObject var appState: AppState
     
     func body(content: Content) -> some View {
         content
@@ -17,6 +18,18 @@ struct MainToolbarModifier: ViewModifier {
     
     private var toolbar: some ToolbarContent {
         ToolbarItemGroup {
+            Button(action: {
+                withAnimation { appEnvironment.interactors.displayInteractor.toggle() }
+            }) {
+                switch appState.displayStyle {
+                case .grid:
+                    Image(systemName: "list.bullet")
+                        .foregroundStyle(.black)
+                case .list:
+                    Image(systemName: "rectangle.grid.2x2")
+                        .foregroundStyle(.black)
+                }
+            }
             Button(action: {
                 withAnimation { appEnvironment.interactors.orderInteractor.makeNewOrder() }
             }) {

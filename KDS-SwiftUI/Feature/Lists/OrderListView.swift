@@ -28,7 +28,9 @@ struct OrderListView: View {
             }
             .frame(maxWidth: .infinity)
             .onAppear {
-                appEnvironment.interactors.orderInteractor.makeNewOrder()
+                if appState.allOrders.isEmpty {
+                    appEnvironment.interactors.orderInteractor.makeNewOrder()
+                }
             }
         }
     }

@@ -10,4 +10,5 @@ import Foundation
 final class AppState: ObservableObject {
     @Published var currentTime: String = ""
     @Published var allOrders: [Order] = []
+    @Published var displayStyle: DisplayStyle = .list
 }

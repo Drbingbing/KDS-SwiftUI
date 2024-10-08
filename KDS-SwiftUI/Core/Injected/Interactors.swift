@@ -7,8 +7,9 @@
 
 struct Interactors {
     let orderInteractor: any OrderInteractor
+    let displayInteractor: any DisplayStyleInteractor
     
     static var stub: Self {
-        .init(orderInteractor: StubOrderInteractor())
+        .init(orderInteractor: StubOrderInteractor(), displayInteractor: StubDisplayStyleInteractor())
     }
 }

@@ -65,3 +65,14 @@ struct OrderDinersSizeView: View {
         }
     }
 }
+
+struct OrderSourceView: View {
+    
+    var order: Order
+    
+    var body: some View {
+        Text("boss")
+            .font(.headline)
+            .foregroundStyle(.gray)
+    }
+}

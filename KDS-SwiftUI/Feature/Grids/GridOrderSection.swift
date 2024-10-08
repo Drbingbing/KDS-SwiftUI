@@ -7,4 +7,14 @@
 
 import SwiftUI
 
-
+struct GridOrderSection: View {
+    
+    var order: Order
+    
+    var body: some View {
+        VStack {
+            GridOrderHeader(order: order)
+            GridItemRow(order: order)
+        }
+    }
+}

@@ -21,7 +21,8 @@ struct AppEnvironment {
 extension AppEnvironment {
     static func bootstrap(_ appState: AppState) -> AppEnvironment {
         let orderInteractor = OrderInteractorImpl(appState: appState)
-        let interactors = Interactors(orderInteractor: orderInteractor)
+        let displayStyleInteractor = DisplayStyleInteractorImpl(appState: appState)
+        let interactors = Interactors(orderInteractor: orderInteractor, displayInteractor: displayStyleInteractor)
         return AppEnvironment(interactors: interactors)
     }
 }

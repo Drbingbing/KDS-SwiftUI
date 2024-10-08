@@ -14,8 +14,14 @@ struct MainWindow: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                KitchenHeader()
-                OrderListView()
+                switch appState.displayStyle {
+                case .grid:
+                    OrderGridView()
+                case .list:
+                    KitchenHeader()
+                    OrderListView()
+                }
+                Spacer()
             }
             .mainToolbar()
             .navigationTitle(
